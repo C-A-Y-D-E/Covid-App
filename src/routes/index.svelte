@@ -3,7 +3,9 @@
   export async function preload() {
     try {
       const usStat = await requests.usStats();
-      return { usStat };
+      const historic = await requests.historicUS();
+      console.log(historic);
+      return { usStat, historic };
     } catch (e) {
       this.error(500, "There was a problem in calling an api");
     }
