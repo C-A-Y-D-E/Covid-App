@@ -1,11 +1,17 @@
 <script context="module">
   import requests from "../data/requests.js";
   import stateNames from "../data/stateNames.js";
+
   export async function preload(page) {
-    let state = page.params["state"];
+    let state = page.params.state;
     if (stateNames.find(s => s.abbreviation === state) === undefined) {
-      this.error(404, "State Not Found");
-      return;
+      return this.error(404, "State Not Found");
+    }
+    try {
+      let stateStat = await requests.stateStat(state);
+      return { state, stateStat };
+    } catch (e) {
+      this.error(500, "There was a problem in calling an api");
     }
   }
 </script>
@@ -14,7 +20,7 @@
   import CovidStat from "../components/CovidStat.svelte";
   import CovidChart from "../components/CovidChart.svelte";
   import TableContainer from "../components/TableContainer.svelte";
-
+  export let stateStat;
   export let state;
 </script>
 
@@ -27,4 +33,4 @@
   </div>
 </div>
 
-<CovidStat />
+<CovidStat {...stateStat} />
