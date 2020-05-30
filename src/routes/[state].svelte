@@ -9,7 +9,8 @@
     }
     try {
       let stateStat = await requests.stateStat(state);
-      return { state, stateStat };
+      let historicState = await requests.historicState(state);
+      return { state, stateStat, historicState };
     } catch (e) {
       this.error(500, "There was a problem in calling an api");
     }
@@ -22,15 +23,19 @@
   import TableContainer from "../components/TableContainer.svelte";
   export let stateStat;
   export let state;
+  export let historicState;
+  const fullStateName = stateNames.find(s => s.abbreviation === state).name;
 </script>
 
 <svelte:head>
-  <title>Covid - {state}</title>
+  <title>Covid - {fullStateName}</title>
 </svelte:head>
 <div class="section header">
   <div class="container">
-    <h1>Covid - {state}</h1>
+    <h1>Covid - {fullStateName}</h1>
   </div>
 </div>
 
 <CovidStat {...stateStat} />
+
+<CovidChart historic={historicState} title={fullStateName} />
